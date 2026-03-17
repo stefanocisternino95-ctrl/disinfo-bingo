@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Climate Disinfo Bingo — EU Climate Pact 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#003399;color:#1a1a2e;min-height:100vh;padding:1rem}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='30' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='130' cy='39' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='152' cy='61' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='160' cy='90' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='152' cy='119' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='130' cy='141' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='100' cy='150' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='70' cy='141' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='48' cy='119' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='40' cy='90' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='48' cy='61' r='5' fill='%23ffcc00'/%3E%3Ccircle cx='70' cy='39' r='5' fill='%23ffcc00'/%3E%3C/svg%3E") repeat;background-size:180px 180px;opacity:0.07;pointer-events:none;z-index:0}
+#app{max-width:780px;margin:0 auto;padding:1.25rem 1rem 2rem;position:relative;z-index:1;background:#f5f0e3;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,51,0.35)}
+.tabs{display:flex;border:1px solid #ccc;border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;background:#e8e3d5;color:#555;transition:background 0.15s}
+.tab.active{background:#2a3d6b;color:#fff}
+.tab:not(:last-child){border-right:1px solid #ccc}
+.view{display:none}
+.view.active{display:block}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:8px}
+.game-title{font-size:18px;font-weight:600;color:#2a3d6b}
+.game-title span{font-size:12px;font-weight:400;color:#888;margin-left:6px}
+.scorebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500}
+.pill-pink{background:#e8437a;color:#fff}
+.pill-green{background:#a8c83a;color:#1a1a00}
+.pill-grey{background:#e8e3d5;color:#555;border:1px solid #ccc}
+.timer-bar{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding:8px 12px;background:#fff;border-radius:8px;border:1px solid #ddd}
+.timer-display{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;min-width:54px;color:#1a1a2e}
+.timer-display.warn{color:#e8437a}
+.timer-controls{display:flex;gap:6px}
+.t-btn{padding:5px 12px;border-radius:6px;border:1px solid #ccc;background:#f5f0e3;color:#1a1a2e;font-size:12px;cursor:pointer}
+.t-btn:hover{background:#e8e3d5}
+.t-btn.active{background:#2a3d6b;color:#fff;border-color:#2a3d6b}
+.timer-progress{flex:1;height:5px;background:#ddd;border-radius:3px;overflow:hidden}
+.timer-fill{height:100%;background:#a8c83a;transition:width 1s linear,background 1s}
+.timer-fill.warn{background:#e8437a}
+.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:0.75rem}
+.cell{border-radius:8px;padding:6px 4px;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:transform 0.1s,filter 0.1s;position:relative;user-select:none;border:none}
+.cell:hover{filter:brightness(0.9);transform:scale(0.98)}
+.cell:active{transform:scale(0.96)}
+.col0{background:#e8437a}
+.col1{background:#a8c83a}
+.col2{background:#2a3d6b}
+.col3{background:#e8437a}
+.col4{background:#a8c83a}
+.tnum{font-size:10px;margin-bottom:2px;opacity:0.7}
+.tname{font-size:9.5px;font-weight:600;line-height:1.3}
+.col0 .tnum,.col0 .tname,.col3 .tnum,.col3 .tname{color:#fff}
+.col1 .tnum,.col1 .tname,.col4 .tnum,.col4 .tname{color:#1a1a00}
+.col2 .tnum,.col2 .tname{color:#d0e4ff}
+.cell.marked::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;background:rgba(245,240,227,0.82);border-radius:8px;color:#2a3d6b}
+.cell.bingo-line::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;background:rgba(168,200,58,0.92);border-radius:8px;color:#1a1a00;border:2px solid #a8c83a}
+.ex-panel{border:1px solid #ccc;border-radius:12px;overflow:hidden;margin-bottom:0.75rem}
+.ex-head{background:#2a3d6b;padding:9px 14px;display:flex;justify-content:space-between;align-items:center}
+.ex-head p{font-size:12px;font-weight:500;color:#fff}
+.ex-nav{display:flex;gap:5px}
+.ex-nav button{background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:12px;border-radius:6px;padding:4px 10px;cursor:pointer}
+.ex-nav button:hover{background:rgba(255,255,255,0.28)}
+.ex-body{padding:12px 14px;background:#fff}
+.ex-src{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px}
+.ex-headline{font-size:14px;font-weight:600;color:#1a1a2e;margin-bottom:8px;line-height:1.4}
+.ex-hint{font-size:12px;color:#888;font-style:italic;margin-bottom:8px}
+.reveal-btn{width:100%;padding:8px;background:#e8437a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.reveal-btn:hover{background:#d03567}
+.answer-tag{display:none;margin-top:8px;padding:8px 12px;border-radius:8px;background:#a8c83a;font-size:13px;font-weight:500;color:#1a1a00;line-height:1.5}
+.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:0.5rem}
+.controls button{padding:7px 16px;border-radius:8px;border:1px solid #ccc;background:#e8e3d5;color:#1a1a2e;font-size:12px;cursor:pointer}
+.controls button:hover{background:#ddd8ca}
+.fac-intro{font-size:13px;color:#555;margin-bottom:1rem;line-height:1.6;padding:10px 14px;background:#fff;border-radius:8px;border:1px solid #ddd}
+.fac-ex{border:1px solid #ccc;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.fac-ex-head{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;background:#e8e3d5}
+.badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px;background:#2a3d6b;color:#fff}
+.fac-ex-body{padding:10px 14px;background:#fff;border-top:1px solid #ddd}
+.fac-ex-src{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px}
+.fac-ex-q{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:6px;line-height:1.4}
+.fac-ex-a{font-size:12px;padding:5px 10px;border-radius:6px;background:#a8c83a;color:#1a1a00;font-weight:600;display:inline-block;margin-bottom:6px}
+.fac-ex-def{font-size:12px;color:#555;line-height:1.5}
+.tactic-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.tac-card{padding:10px 12px;border-radius:8px;border:1px solid #ccc;background:#fff}
+.tac-card .tn{font-size:10px;color:#888}
+.tac-card .tt{font-size:13px;font-weight:600;color:#1a1a2e;margin:2px 0 4px}
+.tac-card .td{font-size:11px;color:#555;line-height:1.4}
+.toast{display:none;position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);background:#a8c83a;color:#1a1a00;font-size:32px;font-weight:700;padding:1.5rem 3rem;border-radius:16px;z-index:999;text-align:center;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,0.2)}
+footer{text-align:center;margin-top:1.5rem;font-size:11px;color:#888;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash" style="position:fixed;inset:0;background:#003399;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:2rem;text-align:center">
+  <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:1.5rem">
+    <circle cx="70" cy="62" r="52" fill="#a8c8f0"/>
+    <circle cx="70" cy="62" r="52" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <path d="M70 14 Q100 30 105 62 Q100 94 70 110 Q40 94 35 62 Q40 30 70 14Z" fill="#4a90d9"/>
+    <path d="M70 14 Q55 35 52 62 Q55 89 70 110 Q85 89 88 62 Q85 35 70 14Z" fill="#c8e0f8"/>
+    <rect x="52" y="54" width="22" height="15" rx="2" fill="#003399"/>
+    <circle cx="63" cy="57.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="66" cy="58.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="67.5" cy="61.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="66" cy="64.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="63" cy="65.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="60" cy="64.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="58.5" cy="61.5" r="1.2" fill="#ffcc00"/>
+    <circle cx="60" cy="58.5" r="1.2" fill="#ffcc00"/>
+    <rect x="18" y="96" width="104" height="34" rx="3" fill="#1a1a6e"/>
+    <text x="70" y="108" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="700" fill="#fff" letter-spacing="1">EUROPEAN</text>
+    <text x="70" y="119" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="700" fill="#fff" letter-spacing="1">CLIMATE PACT</text>
+  </svg>
+  <div style="font-size:32px;font-weight:700;color:#e8437a;letter-spacing:2px;margin-bottom:0.5rem">DISINFO BINGO</div>
+  <div style="font-size:15px;color:#fff;margin-bottom:0.25rem;line-height:1.5">Spotting the tactics that delay climate action</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:0.5rem">Together in Action 2026</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-bottom:2rem;line-height:1.7">Roberta Bosu · Stefano Cisternino<br>Marc Esteve del Valle</div>
+  <button onclick="document.getElementById('splash').style.display='none'" style="padding:14px 40px;background:#e8437a;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:1px">PLAY →</button>
+  <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:1.5rem">#MyWorldOurPlanet · #EUClimatePact</div>
+</div>
+
+<div id="app">
+<div style="text-align:center;margin-bottom:1rem">
+  <div style="font-size:26px;font-weight:700;color:#e8437a;letter-spacing:1px">DISINFO BINGO</div>
+  <div style="font-size:12px;color:#888;margin-top:2px">Spotting the tactics that delay climate action · EU Climate Pact, Together in Action 2026</div>
+  <div style="font-size:11px;color:#aaa;margin-top:2px">Roberta Bosu · Stefano Cisternino · Marc Esteve del Valle</div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('game')">Player card</div>
+  <div class="tab" onclick="switchTab('fac')">Facilitator</div>
+  <div class="tab" onclick="switchTab('ref')">Tactic glossary</div>
+</div>
+<div class="view active" id="view-game">
+  <div class="game-header">
+    <div class="game-title">Your card <span id="round-label">Round 1</span></div>
+    <div class="scorebar">
+      <div class="pill pill-pink" id="count-pill">0 / 25 marked</div>
+      <div class="pill pill-green" id="lines-pill">0 lines</div>
+      <div class="pill pill-grey" id="bingo-pill">No bingo yet</div>
+    </div>
+  </div>
+  <div class="timer-bar">
+    <div class="timer-display" id="timer-display">90s</div>
+    <div class="timer-progress"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+    <div class="timer-controls">
+      <button class="t-btn active" onclick="setDuration(90)" id="t90">90s</button>
+      <button class="t-btn" onclick="setDuration(120)" id="t120">2m</button>
+      <button class="t-btn" onclick="setDuration(180)" id="t180">3m</button>
+      <button class="t-btn" id="t-start" onclick="toggleTimer()">Start</button>
+    </div>
+  </div>
+  <div class="bingo-grid" id="grid"></div>
+  <div class="ex-panel">
+    <div class="ex-head">
+      <p id="ex-label">Example 1 — guess the tactic</p>
+      <div class="ex-nav">
+        <button onclick="prevEx()">&#8592;</button>
+        <button onclick="nextEx()">&#8594;</button>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="ex-src" id="ex-src"></div>
+      <div class="ex-headline" id="ex-headline"></div>
+      <div class="ex-hint">Which tactic is this? Find it on your card.</div>
+      <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">Reveal tactic</button>
+      <div class="answer-tag" id="answer-tag"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button onclick="resetGame()">Reset card</button>
+    <button onclick="newCard()">Shuffle card</button>
+  </div>
+</div>
+<div class="view" id="view-fac">
+  <p class="fac-intro">Present each example, give groups 60–90 seconds to identify the tactic on their physical card, then reveal.</p>
+  <div id="fac-list"></div>
+</div>
+<div class="view" id="view-ref">
+  <div class="tactic-list" id="tactic-list"></div>
+</div>
+<footer>Climate Disinformation Bingo · Roberta Bosu, Stefano Cisternino, Marc Esteve del Valle<br>European Climate Pact — Together in Action 2026 · #MyWorldOurPlanet #EUClimatePact</footer>
+</div>
+<div class="toast" id="toast">BINGO!</div>
+<script>
+const TACTICS=[
+{n:1,name:"Cherry Picking",def:"Selects only data or time periods that support the claim, ignoring the rest."},
+{n:2,name:"False Balance",def:"Presents two sides as equally valid even when evidence clearly supports only one."},
+{n:3,name:"Fake Experts",def:"Uses voices presented as authorities who lack relevant expertise or hold fringe views."},
+{n:4,name:"Quote Mining",def:"Lifts quotes out of context to change their meaning or exaggerate uncertainty."},
+{n:5,name:"Misleading Charts",def:"Manipulates graphs so data appears different from what they actually show."},
+{n:6,name:"Weather vs Climate",def:"Uses short-term weather events as proof against long-term climate trends."},
+{n:7,name:"Magnified Uncertainty",def:"Overstates uncertainty to suggest we do not know enough to act."},
+{n:8,name:"Moving Goalposts",def:"Keeps changing the standard of proof so no evidence is ever enough."},
+{n:9,name:"Topic Diversion",def:"Shifts to another issue to avoid addressing the original claim."},
+{n:10,name:"Whataboutism",def:"Points to what others do instead of answering the point raised."},
+{n:11,name:"Ad Hominem",def:"Attacks the person instead of engaging with the argument or evidence."},
+{n:12,name:"Straw Man",def:"Misrepresents a position as extreme or absurd and attacks that version instead."},
+{n:13,name:"Anecdote as proof",def:"Uses isolated cases as if they outweighed systematic evidence."},
+{n:14,name:"Correlation = causation",def:"Claims that because two things change together, one must cause the other."},
+{n:15,name:"Conspiracy Frame",def:"Explains climate science as a hidden plot, replacing evidence with secret intentions."},
+{n:16,name:"Information Overload",def:"Dumps so many claims that forming a clear judgement becomes hard."},
+{n:17,name:"Emotional Language",def:"Uses fear, anger or outrage to persuade instead of relying on solid arguments."},
+{n:18,name:"False Solution",def:"Promotes an option that sounds good but does not tackle the problem at needed scale."},
+{n:19,name:"False Dilemma",def:"Pretends only two extreme options exist, ignoring realistic alternatives."},
+{n:20,name:"Doomism",def:"Claims it is already too late or pointless to act, so efforts do not matter."},
+{n:21,name:"Gish Gallop",def:"Rapidly throws out many weak claims, making it impossible to address them all."},
+{n:22,name:"Meme Simplification",def:"Compresses complex issues into short shareable messages that strip away key context."},
+{n:23,name:"Ridicule",def:"Uses mockery to dismiss climate science without engaging with evidence."},
+{n:24,name:"Opaque Sources",def:"Cites vague or untraceable sources to appear credible while blocking verification."},
+{n:25,name:"Absolute Slogans",def:"Uses sweeping always/never/everyone statements that erase nuance and resist correction."}
+];
+const EXAMPLES=[
+{src:"Daily Mail, October 2012",q:"Global warming stopped 16 years ago, reveals Met Office report quietly released… and here is the chart to prove it",ans:"Cherry Picking",ansN:1,why:"Selects only the 1997–2012 period, a known statistical anomaly, ignoring the full 150-year warming trend."},
+{src:"The Telegraph, May 2008",q:"Scientists sign petition denying man-made global warming (Oregon Petition Project — 31,000 signatories)",ans:"Fake Experts",ansN:3,why:"Signatories include engineers, doctors and non-climate scientists. Fewer than 0.1% were climate specialists."},
+{src:"Viral social media / The Telegraph, 2009",q:"Greta Thunberg reveals climate change is a hoax — 'It's all about money and controlling people'",ans:"Quote Mining",ansN:4,why:"The quote is fabricated or lifted wildly out of context from Climategate emails, changing meaning entirely."},
+{src:"CNN, February 2023",q:"China building two new coal plants a week as the West abandons fossil fuels",ans:"Whataboutism",ansN:10,why:"Redirects responsibility by pointing at another country's behaviour instead of answering the original point."},
+{src:"CNN, February 2015",q:"Senator Inhofe brings a snowball on the Senate floor as evidence the globe is not warming",ans:"Weather vs Climate",ansN:6,why:"Uses a single local weather event to dismiss long-term global temperature trends."},
+{src:"Daily Telegraph, 2022",q:"Net Zero: the plot to take away your car, your steak, and your holiday abroad",ans:"Straw Man",ansN:12,why:"Misrepresents net-zero policy as a personal lifestyle ban rather than a systemic energy transition."},
+{src:"Reuters, April 2013",q:"Climate scientists struggle to explain warming slowdown",ans:"Magnified Uncertainty",ansN:7,why:"Scientists exploring a short-term plateau is presented as evidence the whole science is in doubt."},
+{src:"Daily Express, 2010",q:"Here are 100 reasons climate change is natural — address every single one before lecturing us",ans:"Gish Gallop",ansN:21,why:"Throwing 100 weak claims simultaneously makes it practically impossible to rebut each one in a debate."},
+{src:"Breitbart, 2017 (no authors or journal cited)",q:"Whistleblower scientists reveal global temperature records have been manipulated to show warming that isn't there",ans:"Opaque Sources",ansN:24,why:"No authors, no journal, no traceable source. The actual whistleblower later clarified there was no data fraud."},
+{src:"The Independent, July 2019",q:"Planting a trillion trees could cancel out a decade of carbon emissions, landmark study finds",ans:"False Solution",ansN:18,why:"Overstates tree-planting capacity and timescale, positioning it as a substitute for cutting emissions at source."},
+{src:"Christopher Monckton's Pause graph, June 2015",q:"No global warming for 18 years 8 months — and counting",ans:"Misleading Charts",ansN:5,why:"The graph's start point (1997, an El Niño peak) is cherry-picked to artificially flatten the trend line."},
+{src:"Daily Mail, 2014",q:"Climate 'scientists' are funded by the very green lobby groups whose agenda they promote",ans:"Ad Hominem",ansN:11,why:"Attacks scientists' funding sources rather than engaging with the evidence their research produced."},
+{src:"Forbes Breaking News, March 2023",q:"'What Percent Of Our Atmosphere Is CO2?' — congressman stumps entire climate panel with questions",ans:"Meme Simplification",ansN:22,why:"Reduces a complex radiative forcing relationship to a single decontextualised percentage to sow confusion."}
+];
+let order=[...Array(25).keys()];
+let marked=new Set();
+let exIdx=0;
+let timerDur=90,timerLeft=90,timerRunning=false,timerInterval=null,bingoShown=false,round=1;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{const ids=['game','fac','ref'];t.classList.toggle('active',ids[i]===id);});
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+}
+function buildGrid(){
+  const g=document.getElementById('grid');g.innerHTML='';
+  const lines=getLines();const linePos=new Set(lines.flat());
+  order.forEach((ti,pos)=>{
+    const t=TACTICS[ti];const col=pos%5;
+    const c=document.createElement('div');
+    let cls='cell col'+col;
+    if(marked.has(ti)){if(linePos.has(pos))cls+=' bingo-line';else cls+=' marked';}
+    c.className=cls;c.dataset.ti=ti;
+    c.innerHTML=`<div class="tnum">${t.n}</div><div class="tname">${t.name}</div>`;
+    c.title=t.def;c.onclick=()=>toggleCell(ti);g.appendChild(c);
+  });
+  updateScore();
+}
+function getLines(){
+  const p=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],[0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],[0,6,12,18,24],[4,8,12,16,20]];
+  return p.filter(line=>line.every(p=>marked.has(parseInt(order[p]))));
+}
+function toggleCell(ti){if(marked.has(ti))marked.delete(ti);else marked.add(ti);buildGrid();}
+function updateScore(){
+  document.getElementById('count-pill').textContent=marked.size+' / 25 marked';
+  const lc=getLines().length;
+  document.getElementById('lines-pill').textContent=lc+' line'+(lc!==1?'s':'');
+  const bp=document.getElementById('bingo-pill');
+  if(lc>0){bp.textContent='BINGO!';bp.className='pill pill-green';if(!bingoShown){bingoShown=true;showToast();}}
+  else{bp.textContent='No bingo yet';bp.className='pill pill-grey';bingoShown=false;}
+}
+function showToast(){const t=document.getElementById('toast');t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+function loadExample(){
+  const ex=EXAMPLES[exIdx];
+  document.getElementById('ex-label').textContent='Example '+(exIdx+1)+' of '+EXAMPLES.length+' — guess the tactic';
+  document.getElementById('ex-src').textContent=ex.src;
+  document.getElementById('ex-headline').textContent=ex.q;
+  document.getElementById('answer-tag').style.display='none';
+  document.getElementById('reveal-btn').style.display='block';
+}
+function revealAnswer(){
+  const ex=EXAMPLES[exIdx];
+  const tag=document.getElementById('answer-tag');
+  tag.innerHTML='<strong>Tactic '+ex.ansN+': '+ex.ans+'</strong><br><span style="font-weight:400;font-size:12px">'+ex.why+'</span>';
+  tag.style.display='block';document.getElementById('reveal-btn').style.display='none';
+  marked.add(ex.ansN-1);buildGrid();
+}
+function nextEx(){exIdx=(exIdx+1)%EXAMPLES.length;loadExample();}
+function prevEx(){exIdx=(exIdx-1+EXAMPLES.length)%EXAMPLES.length;loadExample();}
+function resetGame(){marked.clear();bingoShown=false;document.getElementById('answer-tag').style.display='none';document.getElementById('reveal-btn').style.display='block';buildGrid();resetTimer();}
+function newCard(){shuffle(order);marked.clear();bingoShown=false;round++;document.getElementById('round-label').textContent='Round '+round;exIdx=0;buildGrid();loadExample();resetTimer();}
+function setDuration(s){
+  timerDur=s;timerLeft=s;if(timerRunning)stopTimer();
+  [90,120,180].forEach(v=>document.getElementById('t'+v).className='t-btn'+(s===v?' active':''));
+  renderTimer();
+}
+function toggleTimer(){if(timerRunning)stopTimer();else startTimer();}
+function startTimer(){
+  if(timerLeft<=0)timerLeft=timerDur;timerRunning=true;
+  document.getElementById('t-start').textContent='Stop';document.getElementById('t-start').className='t-btn active';
+  timerInterval=setInterval(()=>{timerLeft--;renderTimer();if(timerLeft<=0)stopTimer();},1000);
+}
+function stopTimer(){
+  timerRunning=false;clearInterval(timerInterval);
+  document.getElementById('t-start').textContent=timerLeft<=0?'Restart':'Start';
+  document.getElementById('t-start').className='t-btn';
+}
+function resetTimer(){stopTimer();timerLeft=timerDur;document.getElementById('t-start').textContent='Start';renderTimer();}
+function renderTimer(){
+  const m=Math.floor(timerLeft/60);const s=timerLeft%60;
+  const disp=document.getElementById('timer-display');
+  disp.textContent=m>0?(m+':'+(s<10?'0':'')+s):(s+'s');
+  disp.className='timer-display'+(timerLeft<=10?' warn':'');
+  const pct=timerDur>0?Math.max(0,timerLeft/timerDur*100):0;
+  const fill=document.getElementById('timer-fill');
+  fill.style.width=pct+'%';fill.className='timer-fill'+(timerLeft<=10?' warn':'');
+}
+function buildFac(){
+  const el=document.getElementById('fac-list');
+  EXAMPLES.forEach((ex,i)=>{
+    const d=document.createElement('div');d.className='fac-ex';
+    d.innerHTML=`<div class="fac-ex-head"><span style="font-size:13px;font-weight:600">Example ${i+1}</span><span class="badge">Tactic ${ex.ansN}: ${ex.ans}</span></div><div class="fac-ex-body"><div class="fac-ex-src">${ex.src}</div><div class="fac-ex-q">"${ex.q}"</div><div class="fac-ex-a">→ ${ex.ans}</div><div class="fac-ex-def">${ex.why}</div></div>`;
+    el.appendChild(d);
+  });
+}
+function buildRef(){
+  const el=document.getElementById('tactic-list');
+  TACTICS.forEach(t=>{
+    const d=document.createElement('div');d.className='tac-card';
+    d.innerHTML=`<div class="tn">${t.n}</div><div class="tt">${t.name}</div><div class="td">${t.def}</div>`;
+    el.appendChild(d);
+  });
+}
+shuffle(order);buildGrid();loadExample();buildFac();buildRef();renderTimer();
+</script>
+</body>
+</html>
